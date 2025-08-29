@@ -1,0 +1,168 @@
+/* ============ ADD HERE YOUR CUSTOM SCSS or  plain CSS CODE. ============
+
+HOW DOES IT WORK?
+
+    Edit this file, save,
+    view page as admin:
+    The style will be AUTOMATICALLY recompiled and
+    your new CSS bundle will be reloaded via ajax to show
+    the new styling edits.
+
+NOTICE for beginners:
+
+    CODE HERE YOUR MASTERPIECE, but before that, if you haven't yet,
+    please take your time to understand and study how Bootstrap works.
+    It can save you a lot of time,
+    eg. to standardize project colors, or fully customize typography.
+    First of all, have a ride in the WordPress Customizer.
+    Then learn to use Bootstrap 5 Classes and utilities.
+    If you come from the CSS world, take some time to study the basic of SASS. It's very powerful.
+    With great powers...you are warned
+
+HOW TO REFERENCE ASSETS AND IMAGES
+    [BREAKING NEWS] The generated CSS bundle is now called from the Theme folder
+    so relative paths work as expected on a standard WordPress Theme.
+    So it's not like before.
+
+
+************************************************		*/
+//a demo statement - uncomment to see page turn red and blush
+//body { background: lime; opacity: 0.3;}
+
+//open menus on hover
+//.dropdown:hover>.dropdown-menu { display: block;}
+
+//PAGE HAS SCROLLED: From the Customizer, enable the "Scroll Detection" feature to be able to use the classes:
+
+//body.scroll-position-at-top  {background:lime}
+//body.scroll-position-not-at-top {background:red}
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+html {
+  font-family: "Roboto";
+  font-size: 12px;
+}
+
+@media (min-width: 992px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+.carousel-indicators {
+  button {
+    width: 15px !important;
+    height: 15px !important;
+    background-color: var(--bs-warning) !important;
+  }
+
+  button.active {
+    background-color: var(--bs-primary) !important;
+  }
+}
+
+.bg-img-center-center-cover {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.bg-hover-primary:hover {
+  background-color: var(--bs-primary);
+}
+
+.text-hover-warning:hover {
+  color: var(--bs-warning);
+}
+
+.of-cover {
+  object-fit: cover;
+}
+
+.of-contain {
+  object-fit: contain;
+}
+
+.op-top-center {
+  object-position: top center;
+}
+
+.op-center-center {
+  object-position: center center;
+}
+
+$rounded-px: (10px, 20px, 30px, 40px, 50px, 60px, 70px, 80px, 90px, 100px);
+
+@each $px in $rounded-px {
+  .rounded-#{$px} {
+    border-radius: $px;
+  }
+}
+
+$max-width-px: (100px, 150px, 200px, 250px, 300px, 350px, 400px);
+
+$min-heights: (
+  "auto",
+  25vh,
+  50vh,
+  75vh,
+  100vh,
+  100px,
+  150px,
+  200px,
+  250px,
+  300px,
+  350px,
+  400px,
+  450px,
+  500px
+);
+
+$breakpoints: (
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px,
+  "xxl": 1400px,
+);
+
+@each $px in $max-width-px {
+  .maxw-#{$px} {
+    max-width: $px;
+  }
+}
+
+@each $mh in $min-heights {
+  .minh-#{$mh} {
+    min-height: $mh;
+  }
+}
+
+@each $bp-name, $bp-size in $breakpoints {
+  @media (min-width: $bp-size) {
+    @each $px in $max-width-px {
+      .maxw-#{$bp-name}-#{$px} {
+        max-width: $px;
+      }
+    }
+
+    @each $mh in $min-heights {
+      .minh-#{$bp-name}-#{$mh} {
+        min-height: $mh;
+      }
+    }
+
+    @each $fs-name, $fs-size in $font-sizes {
+      .fs-#{$bp-name}-#{$fs-name} {
+        font-size: $fs-size;
+      }
+    }
+  }
+}
+
+.whatsapp {
+  background-color: #075e54 !important;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 5px;
+}
