@@ -1,5 +1,7 @@
 <?php
-  const GOOGLE_MAPS_KEY = 'AIzaSyAbEgakBcrqcx5HvO4H6Ikpk8XYVrtHe_Y';
+  const GOOGLE_MAPS_KEY = 'AIzaSyC22aRikLh4Qa03UDIXRlabwxtAVkm8T8k';
+
+  //AIzaSyAbEgakBcrqcx5HvO4H6Ikpk8XYVrtHe_Y
 
   function addGoogleMapApiKeyToAcfInit() {
     acf_update_setting('google_api_key', GOOGLE_MAPS_KEY);

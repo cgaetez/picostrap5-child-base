@@ -1,10 +1,10 @@
-<h1 class="text-center text-primary mb-0 fw-bold">
+<h1 class="text-center text-primary mb-0 fw-bold h2-n">
   <?php the_field('catalog-carousel-title'); ?>
 </h1>
 
-<h3 class="text-center mb-4">
+<p class="text-center mb-4 p-h3">
   <?php the_field('catalog-carousel-subtitle'); ?>
-</h3>
+</p>
 
 <div id="catalog-carousel" class="carousel slide" data-bs-interval="false" data-bs-ride="carousel">
   <div class="carousel-indicators">

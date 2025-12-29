@@ -28,50 +28,68 @@
 
 /*function wooc_extra_register_fields() {?>
 
-       <p class="form-row form-row-first">
-       <label for="reg_billing_first_name"><?php _e( 'Nombre', 'woocommerce' ); ?><span class="required">*</span></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_first_name" id="reg_billing_first_name" value="<?php if ( ! empty( $_POST['billing_first_name'] ) ) esc_attr_e( $_POST['billing_first_name'] ); ?>" />
-       </p>
-       <p class="form-row form-row-last">
-       <label for="reg_billing_last_name"><?php _e( 'Apellido', 'woocommerce' ); ?><span class="required">*</span></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_last_name" id="reg_billing_last_name" value="<?php if ( ! empty( $_POST['billing_last_name'] ) ) esc_attr_e( $_POST['billing_last_name'] ); ?>" />
-       </p>
-       <div class="clear"></div>
-       <p class="form-row form-row-wide">
-       <label for="billing_company"><?php _e( 'Rut', 'woocommerce' ); ?><span class="required">*</span></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_company" id="billing_company" value="<?php if ( ! empty( $_POST['billing_company'] ) ) esc_attr_e( $_POST['billing_rut'] ); ?>" />
-       </p>
-       <div class="clear"></div>
-       <p class="form-row form-row-wide">
-       <label for="reg_billing_phone"><?php _e( 'Teléfono fijo', 'woocommerce' ); ?></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_phone" id="reg_billing_phone" value="<?php if ( ! empty( $_POST['billing_phone'] ) ) esc_attr_e( $_POST['billing_phone'] ); ?>" />
-       </p>
-       <div class="clear"></div>
-       <p class="form-row form-row-wide">
-       <label for="reg_billing_mobile"><?php _e( 'Teléfono celular', 'woocommerce' ); ?></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_mobile" id="reg_billing_mobile" value="<?php if ( ! empty( $_POST['billing_mobile'] ) ) esc_attr_e( $_POST['billing_mobile'] ); ?>" />
-       </p>
-       <div class="clear"></div>
-       <p class="form-row form-row-first">
-       <label for="reg_billing_address_1"><?php _e( 'Calle y número', 'woocommerce' ); ?></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_address_1" id="reg_billing_address_1" value="<?php if ( ! empty( $_POST['billing_address_1'] ) ) esc_attr_e( $_POST['billing_address_1'] ); ?>" />
-       </p>
-       <p class="form-row form-row-last">
-       <label for="reg_billing_address_1"><?php _e( 'Apartamento, habitación, etc', 'woocommerce' ); ?></label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_address_1" id="reg_billing_address_2" value="<?php if ( ! empty( $_POST['billing_address_2'] ) ) esc_attr_e( $_POST['billing_address_2'] ); ?>" />
-       </p>
-       <div class="clear"></div>
-       <p class="form-row form-row-first">
-       <label for="reg_billing_city"><?php _e( 'Ciudad', 'woocommerce' ); ?> </label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_city" id="reg_billing_city" value="<?php  if ( ! empty( $_POST['billing_city'] ) ) esc_attr_e( $_POST['billing_city'] ); ?>" />
-       </p>
-       <p class="form-row form-row-last">
-       <label for="reg_billing_state"><?php _e( 'Región', 'woocommerce' ); ?> </label>
-       <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_state" id="reg_billing_state" value="<?php if ( ! empty( $_POST['billing_state'] ) ) esc_attr_e( $_POST['billing_state'] ); ?>" />
-       </p>
+<p class="form-row form-row-first">
+    <label for="reg_billing_first_name"><?php _e( 'Nombre', 'woocommerce' ); ?><span class="required">*</span></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control"
+        name="billing_first_name" id="reg_billing_first_name"
+        value="<?php if ( ! empty( $_POST['billing_first_name'] ) ) esc_attr_e( $_POST['billing_first_name'] ); ?>" />
+</p>
+<p class="form-row form-row-last">
+    <label for="reg_billing_last_name"><?php _e( 'Apellido', 'woocommerce' ); ?><span class="required">*</span></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control"
+        name="billing_last_name" id="reg_billing_last_name"
+        value="<?php if ( ! empty( $_POST['billing_last_name'] ) ) esc_attr_e( $_POST['billing_last_name'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-wide">
+    <label for="billing_company"><?php _e( 'Rut', 'woocommerce' ); ?><span class="required">*</span></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_company"
+        id="billing_company"
+        value="<?php if ( ! empty( $_POST['billing_company'] ) ) esc_attr_e( $_POST['billing_rut'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-wide">
+    <label for="reg_billing_phone"><?php _e( 'Teléfono fijo', 'woocommerce' ); ?></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_phone"
+        id="reg_billing_phone"
+        value="<?php if ( ! empty( $_POST['billing_phone'] ) ) esc_attr_e( $_POST['billing_phone'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-wide">
+    <label for="reg_billing_mobile"><?php _e( 'Teléfono celular', 'woocommerce' ); ?></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_mobile"
+        id="reg_billing_mobile"
+        value="<?php if ( ! empty( $_POST['billing_mobile'] ) ) esc_attr_e( $_POST['billing_mobile'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-first">
+    <label for="reg_billing_address_1"><?php _e( 'Calle y número', 'woocommerce' ); ?></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control"
+        name="billing_address_1" id="reg_billing_address_1"
+        value="<?php if ( ! empty( $_POST['billing_address_1'] ) ) esc_attr_e( $_POST['billing_address_1'] ); ?>" />
+</p>
+<p class="form-row form-row-last">
+    <label for="reg_billing_address_1"><?php _e( 'Apartamento, habitación, etc', 'woocommerce' ); ?></label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control"
+        name="billing_address_1" id="reg_billing_address_2"
+        value="<?php if ( ! empty( $_POST['billing_address_2'] ) ) esc_attr_e( $_POST['billing_address_2'] ); ?>" />
+</p>
+<div class="clear"></div>
+<p class="form-row form-row-first">
+    <label for="reg_billing_city"><?php _e( 'Ciudad', 'woocommerce' ); ?> </label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_city"
+        id="reg_billing_city"
+        value="<?php  if ( ! empty( $_POST['billing_city'] ) ) esc_attr_e( $_POST['billing_city'] ); ?>" />
+</p>
+<p class="form-row form-row-last">
+    <label for="reg_billing_state"><?php _e( 'Región', 'woocommerce' ); ?> </label>
+    <input type="text" class="woocommerce-Input woocommerce-Input--text input-text form-control" name="billing_state"
+        id="reg_billing_state"
+        value="<?php if ( ! empty( $_POST['billing_state'] ) ) esc_attr_e( $_POST['billing_state'] ); ?>" />
+</p>
 
 
-       <?php
+<?php
  }
 
  add_action( 'woocommerce_register_form_start', 'wooc_extra_register_fields' );
@@ -83,113 +101,112 @@ function validaRut() {
 
 ?>
 <script type="text/javascript">
+jQuery(function($) {
+    $('input#billing_company').after('<span class="error woocommerce-invalid"></span>');
 
-    jQuery(function($){
-        $('input#billing_company').after('<span class="error woocommerce-invalid"></span>');
+    $('input#billing_company').on('change', function() {
 
-$('input#billing_company').on( 'change', function (){
+        var rut = $(this).val();
 
-    var rut = $(this).val();
-
-    if(validateRut(rut)){
-        $('input#billing_company').val(rutFormat(rut));
-        $('span.error').html('');
-    }else{
-        $('span.error').html('Rut inv&aacute;lido');
-        $('input#billing_company').val('');
-        $('input#billing_company').addClass('woocommerce-invalid input');
-        $('input#billing_company').focus();
-    }
-
-    var t = { updateTimer: !1,  dirtyInput: !1,
-        reset_update_checkout_timer: function() {
-            clearTimeout(t.updateTimer)
-        },
-        trigger_update_checkout: function() {
-            t.reset_update_checkout_timer(), t.dirtyInput = !1,
-            $(document.body).trigger("update_checkout")
+        if (validateRut(rut)) {
+            $('input#billing_company').val(rutFormat(rut));
+            $('span.error').html('');
+        } else {
+            $('span.error').html('Rut inv&aacute;lido');
+            $('input#billing_company').val('');
+            $('input#billing_company').addClass('woocommerce-invalid input');
+            $('input#billing_company').focus();
         }
-    };
-    $(document.body).trigger('update_checkout');
-    console.log('Event: update_checkout');
-});
 
-function validateRut(text) {
-    var unformattedRut = String(text).replace(new RegExp("\\.", "g"), "").replace(new RegExp("-", "g"), "");
+        var t = {
+            updateTimer: !1,
+            dirtyInput: !1,
+            reset_update_checkout_timer: function() {
+                clearTimeout(t.updateTimer)
+            },
+            trigger_update_checkout: function() {
+                t.reset_update_checkout_timer(), t.dirtyInput = !1,
+                    $(document.body).trigger("update_checkout")
+            }
+        };
+        $(document.body).trigger('update_checkout');
+        console.log('Event: update_checkout');
+    });
 
-    var dv = unformattedRut.split("").reverse()[0].toLowerCase();
-    var rutNumber = parseInt(unformattedRut.split("").reverse().join("").substring(1).split("").reverse().join(""));
+    function validateRut(text) {
+        var unformattedRut = String(text).replace(new RegExp("\\.", "g"), "").replace(new RegExp("-", "g"), "");
 
-    if(rutNumber<1000000)
-        return false;
+        var dv = unformattedRut.split("").reverse()[0].toLowerCase();
+        var rutNumber = parseInt(unformattedRut.split("").reverse().join("").substring(1).split("").reverse()
+            .join(""));
+
+        if (rutNumber < 1000000)
+            return false;
 
 
-    if (!isNaN(rutNumber)) {
-        var multiplier = 2;
-        var sum = 0;
+        if (!isNaN(rutNumber)) {
+            var multiplier = 2;
+            var sum = 0;
 
-        while (rutNumber !== 0) {
-            var mod = rutNumber % 10;
-            rutNumber = Math.floor(rutNumber / 10);
+            while (rutNumber !== 0) {
+                var mod = rutNumber % 10;
+                rutNumber = Math.floor(rutNumber / 10);
 
-            if (multiplier === 8) {
-                multiplier = 2;
+                if (multiplier === 8) {
+                    multiplier = 2;
+                }
+
+                sum += mod * multiplier;
+
+                multiplier++;
             }
 
-            sum += mod * multiplier;
+            var rest = 11 - sum % 11;
 
-            multiplier++;
-        }
+            var dvValue;
 
-        var rest = 11 - sum % 11;
-
-        var dvValue;
-
-        switch (rest) {
-            case 11:
-                {
+            switch (rest) {
+                case 11: {
                     dvValue = "0";
 
                     break;
                 }
 
-            case 10:
-                {
+                case 10: {
                     dvValue = "k";
                     break;
                 }
 
-            default:
-                {
+                default: {
                     dvValue = String(rest);
                     break;
                 }
+            }
+
+            return dv === dvValue;
         }
 
-        return dv === dvValue;
-    }
+        return false; //0 = false
+    };
 
-    return false; //0 = false
-};
+    function rutFormat(text) {
+        if (text && text.length > 1) {
+            var clearedRut = text.replace(/\.|-|\s/g, "");
 
-function rutFormat(text) {
-    if (text && text.length > 1) {
-        var clearedRut = text.replace(/\.|-|\s/g, "");
+            if (clearedRut) {
+                var numericPart = clearedRut.substr(0, clearedRut.length - 1);
 
-        if (clearedRut) {
-            var numericPart = clearedRut.substr(0, clearedRut.length - 1);
+                if (!isNaN(numericPart)) {
+                    //numericPart = parseInt(numericPart).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-            if (!isNaN(numericPart)) {
-                //numericPart = parseInt(numericPart).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-                return numericPart + "-" + clearedRut.charAt(clearedRut.length - 1);
+                    return numericPart + "-" + clearedRut.charAt(clearedRut.length - 1);
+                }
             }
         }
-    }
 
-    return text;
-};
-    });
+        return text;
+    };
+});
 </script>
 
 <?php }
@@ -230,61 +247,61 @@ function whq_wcchp_order_checkout_fields( $fields ) {
 
 function quoteQtyUpdt() {
 ?>
-  <style>
-    /* Chrome, Safari, Edge, Opera */
-    .quantity input::-webkit-outer-spin-button,
-    .quantity input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+<style>
+/* Chrome, Safari, Edge, Opera */
+.quantity input::-webkit-outer-spin-button,
+.quantity input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
-    /* Firefox */
-    .quantity input[type=number] {
-      -moz-appearance: textfield;
-    }
-  </style>
+/* Firefox */
+.quantity input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
 
-  <script>
-    function addStyleFunction(input) {
-      const inputPlus = jQuery(input).siblings().filter('.input-plus');
-      const inputMinus = jQuery(input).siblings().filter('.input-minus');
+<script>
+function addStyleFunction(input) {
+    const inputPlus = jQuery(input).siblings().filter('.input-plus');
+    const inputMinus = jQuery(input).siblings().filter('.input-minus');
 
-      inputPlus.click((e) => {
+    inputPlus.click((e) => {
         const input = jQuery(e.target).siblings().filter('input[type=number]')[0];
-        
+
         input.stepUp();
-        
+
         jQuery(input).trigger('change');
-      });
-
-      inputMinus.click((e) => {
-        const input = jQuery(e.target).siblings().filter('input[type=number]')[0];
-        
-        input.stepDown();
-        
-        jQuery(input).trigger('change');
-      });
-    }
-
-    function styleNumberInputs() {
-      jQuery('.quantity').addClass('d-flex gap-2 justify-content-start');
-
-      const numbersWithoutStyle = jQuery('input[type=number]:not(.with-style)');
-
-      jQuery('<span class="input-minus bg-warning text-white btn px-3">-</span>').insertBefore(numbersWithoutStyle);
-      jQuery('<span class="input-plus bg-warning text-white btn px-3">+</span>').insertAfter(numbersWithoutStyle)
-
-      addStyleFunction(numbersWithoutStyle);
-
-      numbersWithoutStyle.addClass('with-style');
-    }
-
-    jQuery(document).ajaxStop(() => {
-      styleNumberInputs();
     });
 
+    inputMinus.click((e) => {
+        const input = jQuery(e.target).siblings().filter('input[type=number]')[0];
+
+        input.stepDown();
+
+        jQuery(input).trigger('change');
+    });
+}
+
+function styleNumberInputs() {
+    jQuery('.quantity').addClass('d-flex gap-2 justify-content-start');
+
+    const numbersWithoutStyle = jQuery('input[type=number]:not(.with-style)');
+
+    jQuery('<span class="input-minus bg-warning text-white btn px-3">-</span>').insertBefore(numbersWithoutStyle);
+    jQuery('<span class="input-plus bg-warning text-white btn px-3">+</span>').insertAfter(numbersWithoutStyle)
+
+    addStyleFunction(numbersWithoutStyle);
+
+    numbersWithoutStyle.addClass('with-style');
+}
+
+jQuery(document).ajaxStop(() => {
     styleNumberInputs();
-  </script>
+});
+
+styleNumberInputs();
+</script>
 <?php
 }
 
@@ -295,16 +312,16 @@ remove_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_
 
 function woocommerce_template_loop_category_title_override( $category ) {
 ?>
-  <h2 class="woocommerce-loop-category__title bg-primary text-white text-center">
+<h2 class="woocommerce-loop-category__title bg-primary text-white text-center">
 
-  <?php
+    <?php
     echo esc_html( $category->name ); //Update your title which you want to update here
 
     if ( $category->count > 0 ) {
       echo apply_filters( 'woocommerce_subcategory_count_html', ' <mark class="count">(' . esc_html( $category->count ) . ')</mark>', $category );
     } ?>
-  </h2>
-  <?php
+</h2>
+<?php
 }
 add_action( 'woocommerce_shop_loop_subcategory_title', 'woocommerce_template_loop_category_title_override', 1 );
 
@@ -619,7 +636,7 @@ add_action('woocommerce_product_query', function ($query, $query_vars) {
         'status'    => 'publish',
         'type'      => 'grouped',
         'limit'     => -1,
-        'product_cat'  => [$queried_object->term_id],
+        //'product_cat'  => $queried_object->term_id,
         'return'    => 'ids',
     ]);
 
@@ -639,7 +656,7 @@ add_action('woocommerce_product_query', function ($query, $query_vars) {
         'status'    => 'publish',
         'type'      => 'simple',
         'limit'     => -1,
-        'product_cat'  => [$queried_object->term_id],
+        //'product_cat'  => $queried_object->term_id,
         'return'    => 'ids',
     ]);
 
