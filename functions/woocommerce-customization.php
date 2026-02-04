@@ -597,14 +597,39 @@ add_action('woocommerce_single_product_summary', function () {
         return;
     }
 
+    // Obtener nombres de todos los hermanos
+    $sibling_names = [];
+    foreach ($child_ids as $sibling_id) {
+        $sib = wc_get_product($sibling_id);
+        if ($sib) {
+            $sibling_names[$sibling_id] = $sib->get_name();
+        }
+    }
+
+    // Calcular prefijo común para mostrar solo la parte diferente
+    $names = array_values($sibling_names);
+    $prefix = $names[0] ?? '';
+    foreach ($names as $name) {
+        while ($prefix !== '' && strpos($name, $prefix) !== 0) {
+            $prefix = mb_substr($prefix, 0, mb_strlen($prefix) - 1);
+        }
+    }
+    // Cortar en el último espacio para no cortar palabras
+    $last_space = strrpos($prefix, ' ');
+    if ($last_space !== false) {
+        $prefix = substr($prefix, 0, $last_space + 1);
+    }
+
     echo '<div class="d-flex flex-wrap gap-2">';
 
-    foreach ($child_ids as $sibling_id) {
-        $sibling_product = wc_get_product($sibling_id);
-
+    foreach ($sibling_names as $sibling_id => $name) {
         $active_class = ($sibling_id == $product_id) ? 'btn-warning' : 'btn-primary';
+        $short_name = ltrim(mb_substr($name, mb_strlen($prefix)));
+        if ($short_name === '') {
+            $short_name = $name;
+        }
 
-        echo '<a href="' . esc_url(get_permalink($sibling_id)) . '" class="btn  btn-sm ' . $active_class . '">' . esc_html($sibling_product->get_name()) . '</a>';
+        echo '<a href="' . esc_url(get_permalink($sibling_id)) . '" class="btn btn-sm ' . $active_class . '">' . esc_html($short_name) . '</a>';
     }
 
     echo '</div>';
