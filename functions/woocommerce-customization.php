@@ -262,6 +262,22 @@ $already_printed = true;
 .quantity input[type=number] {
     -moz-appearance: textfield;
 }
+
+.yith_ywraq_add_item_browse_message a {
+    display: inline-block;
+    padding: 8px 20px;
+    background-color: #ecbd16;
+    color: #132b51;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.yith_ywraq_add_item_browse_message a:hover {
+    background-color: #d4a913;
+    color: #132b51;
+    text-decoration: none;
+}
 </style>
 
 <script>
