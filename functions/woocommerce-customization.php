@@ -98,7 +98,7 @@
 add_action('wp_footer', 'validaRut', 50);
 
 function validaRut() {
-
+if ( ! is_checkout() && ! is_account_page() ) return;
 ?>
 <script type="text/javascript">
 jQuery(function($) {
