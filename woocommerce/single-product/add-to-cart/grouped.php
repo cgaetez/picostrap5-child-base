@@ -161,13 +161,19 @@
 <?php do_action( 'woocommerce_after_add_to_cart_form' ); ?>
 
 <style>
+form.cart.grouped_form {
+    margin: 0 !important;
+    padding: 0 !important;
+}
 .woocommerce-grouped-product-list.group_table {
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
     border: none !important;
-    margin-top: 40px !important;
-    margin-bottom: 40px !important;
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+    margin: 0.25rem 0 !important;
+    padding: 0 !important;
 }
 .woocommerce-grouped-product-list.group_table > tbody {
     display: contents !important;
