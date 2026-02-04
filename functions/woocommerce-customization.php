@@ -273,6 +273,7 @@ $already_printed = true;
     border-radius: 4px;
     margin-top: 10px;
 }
+
 .yith_ywraq_add_item_browse_message a:hover {
     background-color: #d4a913;
     color: #132b51;
@@ -561,9 +562,12 @@ add_action('woocommerce_single_product_summary', function () {
     $product_id = $product->get_id();
     $child_ids = [];
 
+    // En productos agrupados, la tabla ya muestra nombres cortos, no duplicar
     if ($product->is_type('grouped')) {
-        $child_ids = $product->get_children();
-    } elseif ($product->is_type('simple')) {
+        return;
+    }
+
+    if ($product->is_type('simple')) {
         $grouped_parent = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT post_id FROM {$wpdb->postmeta}
@@ -578,7 +582,6 @@ add_action('woocommerce_single_product_summary', function () {
         }
 
         $children_meta = get_post_meta($grouped_parent->post_id, '_children', true);
-
         if (!$children_meta) {
             return;
         }
@@ -592,11 +595,11 @@ add_action('woocommerce_single_product_summary', function () {
         return;
     }
 
-    // Obtener nombres de todos los hermanos
+    // Obtener nombres de todos los hermanos (solo publicados)
     $sibling_names = [];
     foreach ($child_ids as $sibling_id) {
         $sib = wc_get_product($sibling_id);
-        if ($sib) {
+        if ($sib && $sib->get_status() === 'publish' && $sib->is_visible()) {
             $sibling_names[$sibling_id] = $sib->get_name();
         }
     }
@@ -618,6 +621,10 @@ add_action('woocommerce_single_product_summary', function () {
     if ($last_space !== false) {
         $prefix = substr($prefix, 0, $last_space + 1);
     }
+    // Si el prefijo es muy corto (menos de 5 chars), no acortar
+    if (mb_strlen(trim($prefix)) < 5) {
+        $prefix = '';
+    }
 
     echo '<div class="d-flex flex-wrap gap-2">';
 
@@ -627,6 +634,7 @@ add_action('woocommerce_single_product_summary', function () {
         if ($short_name === '') {
             $short_name = $name;
         }
+        $short_name = mb_strtoupper(mb_substr($short_name, 0, 1)) . mb_substr($short_name, 1);
 
         echo '<a href="' . esc_url(get_permalink($sibling_id)) . '" class="btn btn-sm ' . $active_class . '">' . esc_html($short_name) . '</a>';
     }

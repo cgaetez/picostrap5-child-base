@@ -40,22 +40,41 @@
       );
       $show_add_to_cart_button = false;
 
+      // Calcular nombres cortos (quitar prefijo común, solo productos visibles)
+      $acenor_short_names = array();
+      $acenor_all_names = array();
+      foreach ( $grouped_products as $gp ) {
+          if ( $gp->get_status() === 'publish' && $gp->is_visible() ) {
+              $acenor_all_names[ $gp->get_id() ] = $gp->get_name();
+          }
+      }
+      $acenor_name_values = array_values( $acenor_all_names );
+      $acenor_prefix = isset( $acenor_name_values[0] ) ? $acenor_name_values[0] : '';
+      foreach ( $acenor_name_values as $acenor_n ) {
+          while ( $acenor_prefix !== '' && strpos( $acenor_n, $acenor_prefix ) !== 0 ) {
+              $acenor_prefix = mb_substr( $acenor_prefix, 0, mb_strlen( $acenor_prefix ) - 1 );
+          }
+      }
+      $acenor_last_space = strrpos( $acenor_prefix, ' ' );
+      if ( $acenor_last_space !== false ) {
+          $acenor_prefix = substr( $acenor_prefix, 0, $acenor_last_space + 1 );
+      }
+      // Si el prefijo es muy corto, no acortar
+      if ( mb_strlen( trim( $acenor_prefix ) ) < 5 ) {
+          $acenor_prefix = '';
+      }
+      foreach ( $acenor_all_names as $acenor_cid => $acenor_name ) {
+          $acenor_short = ltrim( mb_substr( $acenor_name, mb_strlen( $acenor_prefix ) ) );
+          $acenor_short_names[ $acenor_cid ] = ( $acenor_short !== '' ) ? $acenor_short : $acenor_name;
+      }
+
       do_action( 'woocommerce_grouped_product_list_before', $grouped_product_columns, $quantites_required, $product );
 
-      // Calcular prefijo común para nombres cortos
-      $all_names = array_map(function($child) { return $child->get_name(); }, $grouped_products);
-      $common_prefix = $all_names[0] ?? '';
-      foreach ($all_names as $n) {
-        while ($common_prefix !== '' && strpos($n, $common_prefix) !== 0) {
-          $common_prefix = mb_substr($common_prefix, 0, mb_strlen($common_prefix) - 1);
-        }
-      }
-      $last_sp = strrpos($common_prefix, ' ');
-      if ($last_sp !== false) {
-        $common_prefix = substr($common_prefix, 0, $last_sp + 1);
-      }
-
       foreach ( $grouped_products as $grouped_product_child ) {
+        // Saltar productos no publicados
+        if ( $grouped_product_child->get_status() !== 'publish' || ! $grouped_product_child->is_visible() ) {
+            continue;
+        }
         $post_object        = get_post( $grouped_product_child->get_id() );
         $quantites_required = $quantites_required || ( $grouped_product_child->is_purchasable() && ! $grouped_product_child->has_options() );
         $post               = $post_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -98,12 +117,9 @@
               $value = ob_get_clean();
               break;
             case 'label':
-              $short_label = ltrim(mb_substr($grouped_product_child->get_name(), mb_strlen($common_prefix)));
-              if ($short_label === '') {
-                $short_label = $grouped_product_child->get_name();
-              }
+              $acenor_display_name = isset( $acenor_short_names[ $grouped_product_child->get_id() ] ) ? $acenor_short_names[ $grouped_product_child->get_id() ] : $grouped_product_child->get_name();
               $value  = '<label for="product-' . esc_attr( $grouped_product_child->get_id() ) . '">';
-              $value .= $grouped_product_child->is_visible() ? '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', $grouped_product_child->get_permalink(), $grouped_product_child->get_id() ) ) . '">' . $short_label . '</a>' : $short_label;
+              $value .= $grouped_product_child->is_visible() ? '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', $grouped_product_child->get_permalink(), $grouped_product_child->get_id() ) ) . '">' . esc_html( $acenor_display_name ) . '</a>' : esc_html( $acenor_display_name );
               $value .= '</label>';
               break;
             case 'price':
@@ -143,3 +159,53 @@
 </form>
 
 <?php do_action( 'woocommerce_after_add_to_cart_form' ); ?>
+
+<style>
+.woocommerce-grouped-product-list.group_table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    border: none !important;
+}
+.woocommerce-grouped-product-list.group_table > tbody {
+    display: contents !important;
+}
+.woocommerce-grouped-product-list.group_table tr {
+    display: contents !important;
+}
+.woocommerce-grouped-product-list-item__quantity,
+.woocommerce-grouped-product-list-item__price {
+    display: none !important;
+}
+.woocommerce-grouped-product-list-item__label {
+    display: inline-block !important;
+    padding: 0 !important;
+    border: none !important;
+}
+.woocommerce-grouped-product-list-item__label a {
+    text-transform: capitalize !important;
+    display: inline-block !important;
+    padding: 6px 14px !important;
+    background-color: #132b51 !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    border-radius: 4px !important;
+    font-size: 0.85em !important;
+    white-space: nowrap !important;
+}
+.woocommerce-grouped-product-list-item__label a:hover {
+    background-color: #ecbd16 !important;
+    color: #132b51 !important;
+    text-decoration: none !important;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var links = document.querySelectorAll('.woocommerce-grouped-product-list-item__label a');
+    if (!links.length) return;
+    var max = 0;
+    links.forEach(function(a) { var w = a.offsetWidth; if (w > max) max = w; });
+    links.forEach(function(a) { a.style.minWidth = max + 'px'; a.style.textAlign = 'center'; });
+});
+</script>
