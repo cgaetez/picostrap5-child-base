@@ -372,15 +372,12 @@ function regionName($order){
 
 
 
- function wc_billing_field_strings( $translated_text, $text, $domain ) {
-    switch ( $translated_text ) {
-    case 'Población' :
-    $translated_text = __( 'Ciudad', 'woocommerce' );
-    break;
+ add_filter('woocommerce_checkout_fields', function ($fields) {
+    if (isset($fields['billing']['billing_city']['label'])) {
+        $fields['billing']['billing_city']['label'] = 'Ciudad';
     }
-    return $translated_text;
-    }
-    add_filter( 'gettext', 'wc_billing_field_strings', 20, 3 );
+    return $fields;
+ });
 
 
  /**
