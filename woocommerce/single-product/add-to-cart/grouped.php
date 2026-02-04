@@ -166,6 +166,8 @@
     flex-wrap: wrap !important;
     gap: 8px !important;
     border: none !important;
+    margin-top: 40px !important;
+    margin-bottom: 40px !important;
 }
 .woocommerce-grouped-product-list.group_table > tbody {
     display: contents !important;

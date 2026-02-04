@@ -626,7 +626,7 @@ add_action('woocommerce_single_product_summary', function () {
         $prefix = '';
     }
 
-    echo '<div class="d-flex flex-wrap gap-2">';
+    echo '<div class="acenor-sibling-btns d-flex flex-wrap gap-2 my-3">';
 
     foreach ($sibling_names as $sibling_id => $name) {
         $active_class = ($sibling_id == $product_id) ? 'btn-warning' : 'btn-primary';
@@ -640,6 +640,7 @@ add_action('woocommerce_single_product_summary', function () {
     }
 
     echo '</div>';
+    echo '<script>document.addEventListener("DOMContentLoaded",function(){var b=document.querySelectorAll(".acenor-sibling-btns .btn");if(!b.length)return;var m=0;b.forEach(function(a){var w=a.offsetWidth;if(w>m)m=w});b.forEach(function(a){a.style.minWidth=m+"px";a.style.textAlign="center"})});</script>';
 });
 
 add_action('woocommerce_product_query', function ($query, $query_vars) {
