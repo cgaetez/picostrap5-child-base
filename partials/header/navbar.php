@@ -24,6 +24,6 @@
 
     </div>
   </nav>
-  <a href="tel:+56229259200" class="text-center text-decoration-none  d-block d-lg-none py-2 px-3 fs-1"><i class="fa fa-phone text-warning mr-2" aria-hidden="true"></i> +562 2925 9200</a>
+  <a href="tel:+56229259200" class="text-center text-decoration-none  d-block d-lg-none py-2 px-3 fs-1 llamada-vwo"><i class="fa fa-phone text-warning mr-2" aria-hidden="true"></i> +562 2925 9200</a>
 
 </div>

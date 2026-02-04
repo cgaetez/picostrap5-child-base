@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <span>Catálogo</span>
         </a>
 
-        <a class="hv2-top__phone" href="tel:+56229259200" aria-label="Llamar a +56 2 2925 9200">
+        <a class="hv2-top__phone llamada-vwo" href="tel:+56229259200" aria-label="Llamar a +56 2 2925 9200">
           <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1.03-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.7 21 3 13.3 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.24 1.03z"/></svg>
           <span>+56 2 2925 9200</span>
         </a>

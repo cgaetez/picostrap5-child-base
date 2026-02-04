@@ -12,3 +12,7 @@
   include_once('functions/cf7-attribution.php');
   include_once('functions/cf7-rut-field.php');
   include_once('functions/seoaustral.php');
+  
+  add_filter('dgwt/wcas/form/action', function($url){
+  return trailingslashit( get_option('home') );
+}, 10, 1);

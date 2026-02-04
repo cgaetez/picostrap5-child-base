@@ -188,7 +188,7 @@
     </div>
 
     <div class="hv2f-bottom">
-      <div class="hv2f-copy">&copy; <?php echo date('Y'); ?> Acenor&reg; Chile</div>
+      <div class="hv2f-copy">&copy; <?php echo date('Y'); ?> Acenor&reg; Chile. Todos los derechos reservados</div>
     </div>
   </div>
 </footer>
