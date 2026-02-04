@@ -492,7 +492,12 @@ add_filter('woocommerce_related_products', function ($related_posts, $product_id
     $product = wc_get_product($product_id);
 
     $exclude_ids = [];
-    $valid_related_posts = [];
+
+    // Reutilizar transient de hijos grouped
+    $all_children = get_transient('acenor_grouped_children_ids');
+    if ($all_children === false) {
+        $all_children = [];
+    }
 
     if ($product->is_type('simple')) {
         $grouped_parent = $wpdb->get_row(
@@ -505,73 +510,33 @@ add_filter('woocommerce_related_products', function ($related_posts, $product_id
         );
 
         if ($grouped_parent) {
-            $grouped_product_id = $grouped_parent->post_id;
-
-            $children_meta = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT meta_value FROM {$wpdb->postmeta} 
-                    WHERE post_id = %d AND meta_key = '_children'",
-                    $grouped_product_id
-                )
-            );
-
+            $children_meta = get_post_meta($grouped_parent->post_id, '_children', true);
             if ($children_meta) {
-                $exclude_ids = maybe_unserialize($children_meta);
+                $exclude_ids = (array) $children_meta;
             }
         }
     }
 
     $categories = $product->get_category_ids();
 
-    if (!empty($categories)) {
-        $args = [
-            'post_type'      => 'product',
-            'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'fields'         => 'ids',
-            'tax_query'      => [
-                [
-                    'taxonomy' => 'product_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $categories,
-                ],
-            ],
-        ];
-
-        $query = new WP_Query($args);
-        $category_products = $query->posts;
-
-        foreach ($category_products as $related_id) {
-            if (in_array($related_id, $exclude_ids)) {
-                continue;
-            }
-
-            $related_product = wc_get_product($related_id);
-
-            if (! $related_product) {
-              continue;
-            }
-
-            if ($related_product->is_type('simple')) {
-                $is_in_group = $wpdb->get_var(
-                    $wpdb->prepare(
-                        "SELECT post_id FROM {$wpdb->postmeta}
-                        WHERE meta_key = '_children'
-                        AND meta_value LIKE %s",
-                        '%i:' . $related_id . ';%'
-                    )
-                );
-
-                if ($is_in_group) {
-                  continue;
-                }
-            }
-
-            $valid_related_posts[] = $related_id;
-        }
+    if (empty($categories)) {
+        return [];
     }
 
-    return array_unique($valid_related_posts);
+    $query = new WP_Query([
+        'post_type'      => 'product',
+        'posts_per_page' => 12,
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'post__not_in'   => array_merge($exclude_ids, $all_children, [$product_id]),
+        'tax_query'      => [[
+            'taxonomy' => 'product_cat',
+            'field'    => 'term_id',
+            'terms'    => $categories,
+        ]],
+    ]);
+
+    return $query->posts;
 }, 10, 2);
 
 add_action('woocommerce_single_product_summary', function () {
@@ -630,42 +595,45 @@ add_action('woocommerce_single_product_summary', function () {
 });
 
 add_action('woocommerce_product_query', function ($query, $query_vars) {
-    $queried_object = get_queried_object();
+    $child_product_ids = get_transient('acenor_grouped_children_ids');
 
-    $grouped_product_ids = wc_get_products([
-        'status'    => 'publish',
-        'type'      => 'grouped',
-        'limit'     => -1,
-        //'product_cat'  => $queried_object->term_id,
-        'return'    => 'ids',
-    ]);
+    if ($child_product_ids === false) {
+        $child_product_ids = [];
 
-    $child_product_ids = [];
+        $grouped_product_ids = wc_get_products([
+            'status' => 'publish',
+            'type'   => 'grouped',
+            'limit'  => -1,
+            'return' => 'ids',
+        ]);
 
-    foreach ($grouped_product_ids as $grouped_id) {
-        $group_child_ids = get_post_meta($grouped_id, '_children', true);
+        foreach ($grouped_product_ids as $grouped_id) {
+            $group_child_ids = get_post_meta($grouped_id, '_children', true);
 
-        if (empty($group_child_ids) || ! is_array($group_child_ids)) {
-            continue;
+            if (empty($group_child_ids) || !is_array($group_child_ids)) {
+                continue;
+            }
+
+            $child_product_ids = array_merge($child_product_ids, $group_child_ids);
         }
 
-        $child_product_ids = array_merge($child_product_ids, $group_child_ids);
+        $child_product_ids = array_unique($child_product_ids);
+
+        set_transient('acenor_grouped_children_ids', $child_product_ids, HOUR_IN_SECONDS);
     }
 
-    $single_product_ids = wc_get_products([
-        'status'    => 'publish',
-        'type'      => 'simple',
-        'limit'     => -1,
-        //'product_cat'  => $queried_object->term_id,
-        'return'    => 'ids',
-    ]);
-
-    $filtered_single_product_ids = array_diff($single_product_ids, $child_product_ids);
-
-    $final_product_ids = array_merge($grouped_product_ids, $filtered_single_product_ids);
-
-    $query->set('post__in', $final_product_ids);
+    if (!empty($child_product_ids)) {
+        $existing_excludes = $query->get('post__not_in', []);
+        $query->set('post__not_in', array_merge($existing_excludes, $child_product_ids));
+    }
 }, 10, 2);
+
+add_action('woocommerce_update_product', function ($product_id) {
+    $product = wc_get_product($product_id);
+    if ($product && $product->is_type('grouped')) {
+        delete_transient('acenor_grouped_children_ids');
+    }
+});
 
 
 add_action('woocommerce_grouped_add_to_cart', function () {
