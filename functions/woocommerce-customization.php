@@ -246,6 +246,9 @@ function whq_wcchp_order_checkout_fields( $fields ) {
 
 
 function quoteQtyUpdt() {
+static $already_printed = false;
+if ($already_printed) return;
+$already_printed = true;
 ?>
 <style>
 /* Chrome, Safari, Edge, Opera */
