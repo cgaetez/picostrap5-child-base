@@ -177,10 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
 JS;
   wp_add_inline_script('splide', $init);
 }, 30);
-add_action('wp_enqueue_scripts', function () {
-  wp_enqueue_style('dashicons');
-});
-// Font Awesome 6 
+// Font Awesome 6
 add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style(
     'fa6',
