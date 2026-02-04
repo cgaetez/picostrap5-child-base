@@ -42,6 +42,19 @@
 
       do_action( 'woocommerce_grouped_product_list_before', $grouped_product_columns, $quantites_required, $product );
 
+      // Calcular prefijo común para nombres cortos
+      $all_names = array_map(function($child) { return $child->get_name(); }, $grouped_products);
+      $common_prefix = $all_names[0] ?? '';
+      foreach ($all_names as $n) {
+        while ($common_prefix !== '' && strpos($n, $common_prefix) !== 0) {
+          $common_prefix = mb_substr($common_prefix, 0, mb_strlen($common_prefix) - 1);
+        }
+      }
+      $last_sp = strrpos($common_prefix, ' ');
+      if ($last_sp !== false) {
+        $common_prefix = substr($common_prefix, 0, $last_sp + 1);
+      }
+
       foreach ( $grouped_products as $grouped_product_child ) {
         $post_object        = get_post( $grouped_product_child->get_id() );
         $quantites_required = $quantites_required || ( $grouped_product_child->is_purchasable() && ! $grouped_product_child->has_options() );
@@ -85,8 +98,12 @@
               $value = ob_get_clean();
               break;
             case 'label':
+              $short_label = ltrim(mb_substr($grouped_product_child->get_name(), mb_strlen($common_prefix)));
+              if ($short_label === '') {
+                $short_label = $grouped_product_child->get_name();
+              }
               $value  = '<label for="product-' . esc_attr( $grouped_product_child->get_id() ) . '">';
-              $value .= $grouped_product_child->is_visible() ? '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', $grouped_product_child->get_permalink(), $grouped_product_child->get_id() ) ) . '">' . $grouped_product_child->get_name() . '</a>' : $grouped_product_child->get_name();
+              $value .= $grouped_product_child->is_visible() ? '<a href="' . esc_url( apply_filters( 'woocommerce_grouped_product_list_link', $grouped_product_child->get_permalink(), $grouped_product_child->get_id() ) ) . '">' . $short_label . '</a>' : $short_label;
               $value .= '</label>';
               break;
             case 'price':
