@@ -558,42 +558,37 @@ add_filter('woocommerce_related_products', function ($related_posts, $product_id
 add_action('woocommerce_single_product_summary', function () {
     global $product, $wpdb;
 
-    if (!$product->is_type('simple')) {
-        return;
-    }
-
     $product_id = $product->get_id();
+    $child_ids = [];
 
-    $grouped_parent = $wpdb->get_row(
-        $wpdb->prepare(
-            "SELECT post_id FROM {$wpdb->postmeta} 
-            WHERE meta_key = '_children' 
-            AND meta_value LIKE %s",
-            '%i:' . $product_id . ';%'
-        )
-    );
+    if ($product->is_type('grouped')) {
+        $child_ids = $product->get_children();
+    } elseif ($product->is_type('simple')) {
+        $grouped_parent = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT post_id FROM {$wpdb->postmeta}
+                WHERE meta_key = '_children'
+                AND meta_value LIKE %s",
+                '%i:' . $product_id . ';%'
+            )
+        );
 
-    if (!$grouped_parent) {
+        if (!$grouped_parent) {
+            return;
+        }
+
+        $children_meta = get_post_meta($grouped_parent->post_id, '_children', true);
+
+        if (!$children_meta) {
+            return;
+        }
+
+        $child_ids = (array) $children_meta;
+    } else {
         return;
     }
 
-    $children_meta = $wpdb->get_var(
-        $wpdb->prepare(
-            "SELECT meta_value FROM {$wpdb->postmeta} 
-            WHERE post_id = %d AND meta_key = '_children'",
-            $grouped_parent->post_id
-        )
-    );
-
-    if (!$children_meta) {
-        return;
-    }
-
-    $child_ids = maybe_unserialize($children_meta);
-
-    if (!is_array($child_ids)) {
-        echo '<p>Failed to decode sibling products.</p>';
-
+    if (empty($child_ids)) {
         return;
     }
 
@@ -604,6 +599,10 @@ add_action('woocommerce_single_product_summary', function () {
         if ($sib) {
             $sibling_names[$sibling_id] = $sib->get_name();
         }
+    }
+
+    if (count($sibling_names) < 2) {
+        return;
     }
 
     // Calcular prefijo común para mostrar solo la parte diferente
