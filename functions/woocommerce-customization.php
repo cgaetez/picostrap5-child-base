@@ -691,10 +691,13 @@ add_action('woocommerce_single_product_summary', function () {
         if ($short_name === '' || mb_strlen($short_name) < 10) {
             $short_name = $name;
         }
-        // Si el nombre aún es largo, quitar palabras (separadas por espacio) hasta las medidas
-        // Mantener códigos pegados a números como RS5, H20, etc.
-        if (mb_strlen($short_name) > 25 && preg_match('/^(.+\s)(\d+\s*[xX×\/])/u', $short_name, $matches)) {
-            $short_name = trim(mb_substr($short_name, mb_strlen($matches[1])));
+        // Si el nombre aún es largo, quitar solo palabras de texto puro (sin números) del inicio
+        // Mantener códigos como RS5, H20, y las medidas
+        if (mb_strlen($short_name) > 25) {
+            // Quitar palabras solo-letras del inicio, una por una, hasta encontrar algo con número
+            while (preg_match('/^([a-zA-ZáéíóúñÁÉÍÓÚÑ]+)\s+(.+)$/u', $short_name, $matches) && mb_strlen($short_name) > 25) {
+                $short_name = trim($matches[2]);
+            }
         }
         $short_name = mb_strtoupper(mb_substr($short_name, 0, 1)) . mb_substr($short_name, 1);
 
