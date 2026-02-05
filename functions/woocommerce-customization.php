@@ -673,6 +673,18 @@ add_action('woocommerce_single_product_summary', function () {
     if ($last_space !== false) {
         $prefix = substr($prefix, 0, $last_space + 1);
     }
+    // Asegurar que el prefijo NO incluya medidas (cualquier parte con números)
+    // Truncar antes del primer dígito para preservar medidas como "1x3m"
+    if (preg_match('/\d/', $prefix, $digit_match, PREG_OFFSET_CAPTURE)) {
+        $digit_pos = $digit_match[0][1];
+        $prefix_before_digit = substr($prefix, 0, $digit_pos);
+        $last_space_before_digit = strrpos($prefix_before_digit, ' ');
+        if ($last_space_before_digit !== false) {
+            $prefix = substr($prefix, 0, $last_space_before_digit + 1);
+        } else {
+            $prefix = '';
+        }
+    }
     if (mb_strlen(trim($prefix)) < 5) {
         $prefix = '';
     }
