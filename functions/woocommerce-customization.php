@@ -677,13 +677,23 @@ add_action('woocommerce_single_product_summary', function () {
         $prefix = '';
     }
 
+    // Si solo hay 1 hermano visible, no mostrar botones de navegación
+    if (count($sibling_names) < 2) {
+        return;
+    }
+
     echo '<div class="acenor-sibling-btns d-flex flex-wrap gap-2 my-3">';
 
     foreach ($sibling_names as $sibling_id => $name) {
         $active_class = ($sibling_id == $product_id) ? 'btn-warning' : 'btn-primary';
         $short_name = ltrim(mb_substr($name, mb_strlen($prefix)));
-        if ($short_name === '') {
+        // Si el nombre corto es muy corto (menos de 10 chars), usar el nombre completo
+        if ($short_name === '' || mb_strlen($short_name) < 10) {
             $short_name = $name;
+        }
+        // Si el nombre aún es largo, intentar extraer solo las medidas (ej: "15 X 15 X 1 Mm")
+        if (mb_strlen($short_name) > 25 && preg_match('/(\d+[\s,\.]*[xX×][\s,\.\d]+(?:mm|m|cm)?)/i', $short_name, $matches)) {
+            $short_name = trim($matches[0]);
         }
         $short_name = mb_strtoupper(mb_substr($short_name, 0, 1)) . mb_substr($short_name, 1);
 

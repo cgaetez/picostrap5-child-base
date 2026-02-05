@@ -65,7 +65,15 @@
       }
       foreach ( $acenor_all_names as $acenor_cid => $acenor_name ) {
           $acenor_short = ltrim( mb_substr( $acenor_name, mb_strlen( $acenor_prefix ) ) );
-          $acenor_short_names[ $acenor_cid ] = ( $acenor_short !== '' ) ? $acenor_short : $acenor_name;
+          // Si el nombre corto es muy corto (menos de 10 chars), usar el nombre completo
+          if ( $acenor_short === '' || mb_strlen( $acenor_short ) < 10 ) {
+              $acenor_short = $acenor_name;
+          }
+          // Si el nombre aún es largo, intentar extraer solo las medidas (ej: "15 X 15 X 1 Mm")
+          if ( mb_strlen( $acenor_short ) > 25 && preg_match( '/(\d+[\s,\.]*[xX×][\s,\.\d]+(?:mm|m|cm)?)/i', $acenor_short, $matches ) ) {
+              $acenor_short = trim( $matches[0] );
+          }
+          $acenor_short_names[ $acenor_cid ] = $acenor_short;
       }
 
       do_action( 'woocommerce_grouped_product_list_before', $grouped_product_columns, $quantites_required, $product );
