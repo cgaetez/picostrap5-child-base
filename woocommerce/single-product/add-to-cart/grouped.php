@@ -69,9 +69,10 @@
           if ( $acenor_short === '' || mb_strlen( $acenor_short ) < 10 ) {
               $acenor_short = $acenor_name;
           }
-          // Si el nombre aún es largo, quitar texto hasta el primer número (dejar solo medidas)
-          if ( mb_strlen( $acenor_short ) > 25 && preg_match( '/^[^\d]+/', $acenor_short, $matches ) ) {
-              $acenor_short = trim( mb_substr( $acenor_short, mb_strlen( $matches[0] ) ) );
+          // Si el nombre aún es largo, quitar palabras (separadas por espacio) hasta las medidas
+          // Mantener códigos pegados a números como RS5, H20, etc.
+          if ( mb_strlen( $acenor_short ) > 25 && preg_match( '/^(.+\s)(\d+\s*[xX×\/])/u', $acenor_short, $matches ) ) {
+              $acenor_short = trim( mb_substr( $acenor_short, mb_strlen( $matches[1] ) ) );
           }
           $acenor_short_names[ $acenor_cid ] = $acenor_short;
       }
