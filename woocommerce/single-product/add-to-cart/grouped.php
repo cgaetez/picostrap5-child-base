@@ -65,8 +65,11 @@
       }
       foreach ( $acenor_all_names as $acenor_cid => $acenor_name ) {
           $acenor_short = ltrim( mb_substr( $acenor_name, mb_strlen( $acenor_prefix ) ) );
-          // Si el nombre corto es muy corto (menos de 10 chars), usar el nombre completo
-          if ( $acenor_short === '' || mb_strlen( $acenor_short ) < 10 ) {
+          // Si el nombre corto es vacío, usar el nombre completo
+          // Pero si empieza con número (medidas), mantenerlo aunque sea corto
+          if ( $acenor_short === '' ) {
+              $acenor_short = $acenor_name;
+          } elseif ( mb_strlen( $acenor_short ) < 10 && !preg_match( '/^\d/', $acenor_short ) ) {
               $acenor_short = $acenor_name;
           }
           // Si el nombre aún es largo, quitar solo palabras de texto puro (sin números) del inicio

@@ -687,8 +687,11 @@ add_action('woocommerce_single_product_summary', function () {
     foreach ($sibling_names as $sibling_id => $name) {
         $active_class = ($sibling_id == $product_id) ? 'btn-warning' : 'btn-primary';
         $short_name = ltrim(mb_substr($name, mb_strlen($prefix)));
-        // Si el nombre corto es muy corto (menos de 10 chars), usar el nombre completo
-        if ($short_name === '' || mb_strlen($short_name) < 10) {
+        // Si el nombre corto es vacío, usar el nombre completo
+        // Pero si empieza con número (medidas), mantenerlo aunque sea corto
+        if ($short_name === '') {
+            $short_name = $name;
+        } elseif (mb_strlen($short_name) < 10 && !preg_match('/^\d/', $short_name)) {
             $short_name = $name;
         }
         // Si el nombre aún es largo, quitar solo palabras de texto puro (sin números) del inicio
