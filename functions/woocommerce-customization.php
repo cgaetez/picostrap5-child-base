@@ -694,11 +694,11 @@ add_action('woocommerce_single_product_summary', function () {
         } elseif (mb_strlen($short_name) < 10 && !preg_match('/^\d/', $short_name)) {
             $short_name = $name;
         }
-        // Si el nombre aún es largo, quitar solo palabras de texto puro (sin números) del inicio
-        // Mantener códigos como RS5, H20, y las medidas
+        // Si el nombre aún es largo, quitar solo el bloque inicial de palabras de texto puro (sin números)
+        // Mantener códigos como RS5, H20, y todas las medidas
         if (mb_strlen($short_name) > 25) {
-            // Quitar palabras solo-letras del inicio, una por una, hasta encontrar algo con número
-            while (preg_match('/^([a-zA-ZáéíóúñÁÉÍÓÚÑ]+)\s+(.+)$/u', $short_name, $matches) && mb_strlen($short_name) > 25) {
+            // Quitar bloque de palabras solo-letras del inicio hasta la primera palabra con número
+            if (preg_match('/^((?:[a-zA-ZáéíóúñÁÉÍÓÚÑ]+\s+)+)(\S*\d.*)$/u', $short_name, $matches)) {
                 $short_name = trim($matches[2]);
             }
         }
