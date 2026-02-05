@@ -503,31 +503,105 @@ $args['date_created'] = $fdate; //format to use YYYY-MM-DD...YYYY-MM-DD
 return $args;
 }
 
-add_filter('woocommerce_related_products', function ($related_posts, $product_id) {
+// --- Helpers cacheados para mapa hijo→padre y nombres de hermanos ---
+
+function acenor_get_child_parent_map() {
+    $map = get_transient('acenor_child_parent_map');
+    if ($map !== false) return $map;
+
+    $map = [];
+    $grouped_ids = get_posts([
+        'post_type'   => 'product',
+        'post_status' => 'publish',
+        'fields'      => 'ids',
+        'numberposts' => -1,
+        'tax_query'   => [[
+            'taxonomy' => 'product_type',
+            'field'    => 'slug',
+            'terms'    => 'grouped',
+        ]],
+    ]);
+
+    foreach ($grouped_ids as $gid) {
+        $children = get_post_meta($gid, '_children', true);
+        if (is_array($children)) {
+            foreach ($children as $cid) {
+                $map[(int)$cid] = (int)$gid;
+            }
+        }
+    }
+
+    set_transient('acenor_child_parent_map', $map, HOUR_IN_SECONDS);
+    return $map;
+}
+
+function acenor_get_sibling_names($parent_id) {
+    $cache_key = 'acenor_sibling_names_' . $parent_id;
+    $cached = get_transient($cache_key);
+    if ($cached !== false) return $cached;
+
+    $children_meta = get_post_meta($parent_id, '_children', true);
+    if (!is_array($children_meta) || empty($children_meta)) {
+        set_transient($cache_key, [], HOUR_IN_SECONDS);
+        return [];
+    }
+
     global $wpdb;
+    $ids_placeholder = implode(',', array_map('intval', $children_meta));
+    $results = $wpdb->get_results(
+        "SELECT ID, post_title FROM {$wpdb->posts}
+         WHERE ID IN ({$ids_placeholder})
+         AND post_status = 'publish'
+         AND post_type = 'product'"
+    );
 
+    $names = [];
+    $published_ids = [];
+    foreach ($results as $row) {
+        $published_ids[] = (int) $row->ID;
+        $names[(int) $row->ID] = $row->post_title;
+    }
+
+    // Filtrar productos no visibles en catálogo (catalog visibility)
+    if (!empty($published_ids)) {
+        $hidden = get_posts([
+            'post_type'   => 'product',
+            'post__in'    => $published_ids,
+            'fields'      => 'ids',
+            'numberposts' => -1,
+            'tax_query'   => [[
+                'taxonomy' => 'product_visibility',
+                'field'    => 'name',
+                'terms'    => ['exclude-from-catalog'],
+                'operator' => 'IN',
+            ]],
+        ]);
+        foreach ($hidden as $hid) {
+            unset($names[(int)$hid]);
+        }
+    }
+
+    set_transient($cache_key, $names, HOUR_IN_SECONDS);
+    return $names;
+}
+
+// --- Productos relacionados (optimizado con cache) ---
+
+add_filter('woocommerce_related_products', function ($related_posts, $product_id) {
     $product = wc_get_product($product_id);
-
     $exclude_ids = [];
 
-    // Reutilizar transient de hijos grouped
     $all_children = get_transient('acenor_grouped_children_ids');
     if ($all_children === false) {
         $all_children = [];
     }
 
     if ($product->is_type('simple')) {
-        $grouped_parent = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT post_id FROM {$wpdb->postmeta}
-                WHERE meta_key = '_children'
-                AND meta_value LIKE %s",
-                '%i:' . $product_id . ';%'
-            )
-        );
+        $map = acenor_get_child_parent_map();
+        $parent_id = isset($map[$product_id]) ? $map[$product_id] : false;
 
-        if ($grouped_parent) {
-            $children_meta = get_post_meta($grouped_parent->post_id, '_children', true);
+        if ($parent_id) {
+            $children_meta = get_post_meta($parent_id, '_children', true);
             if ($children_meta) {
                 $exclude_ids = (array) $children_meta;
             }
@@ -556,53 +630,32 @@ add_filter('woocommerce_related_products', function ($related_posts, $product_id
     return $query->posts;
 }, 10, 2);
 
+// --- Botones de hermanos en producto simple (optimizado con cache) ---
+
 add_action('woocommerce_single_product_summary', function () {
-    global $product, $wpdb;
+    global $product;
 
     $product_id = $product->get_id();
-    $child_ids = [];
 
     // En productos agrupados, la tabla ya muestra nombres cortos, no duplicar
     if ($product->is_type('grouped')) {
         return;
     }
 
-    if ($product->is_type('simple')) {
-        $grouped_parent = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT post_id FROM {$wpdb->postmeta}
-                WHERE meta_key = '_children'
-                AND meta_value LIKE %s",
-                '%i:' . $product_id . ';%'
-            )
-        );
-
-        if (!$grouped_parent) {
-            return;
-        }
-
-        $children_meta = get_post_meta($grouped_parent->post_id, '_children', true);
-        if (!$children_meta) {
-            return;
-        }
-
-        $child_ids = (array) $children_meta;
-    } else {
+    if (!$product->is_type('simple')) {
         return;
     }
 
-    if (empty($child_ids)) {
+    // Buscar padre agrupado usando mapa cacheado (sin LIKE query)
+    $map = acenor_get_child_parent_map();
+    $parent_id = isset($map[$product_id]) ? $map[$product_id] : false;
+
+    if (!$parent_id) {
         return;
     }
 
-    // Obtener nombres de todos los hermanos (solo publicados)
-    $sibling_names = [];
-    foreach ($child_ids as $sibling_id) {
-        $sib = wc_get_product($sibling_id);
-        if ($sib && $sib->get_status() === 'publish' && $sib->is_visible()) {
-            $sibling_names[$sibling_id] = $sib->get_name();
-        }
-    }
+    // Obtener nombres de hermanos desde cache
+    $sibling_names = acenor_get_sibling_names($parent_id);
 
     if (count($sibling_names) < 2) {
         return;
@@ -616,12 +669,10 @@ add_action('woocommerce_single_product_summary', function () {
             $prefix = mb_substr($prefix, 0, mb_strlen($prefix) - 1);
         }
     }
-    // Cortar en el último espacio para no cortar palabras
     $last_space = strrpos($prefix, ' ');
     if ($last_space !== false) {
         $prefix = substr($prefix, 0, $last_space + 1);
     }
-    // Si el prefijo es muy corto (menos de 5 chars), no acortar
     if (mb_strlen(trim($prefix)) < 5) {
         $prefix = '';
     }
@@ -681,6 +732,8 @@ add_action('woocommerce_update_product', function ($product_id) {
     $product = wc_get_product($product_id);
     if ($product && $product->is_type('grouped')) {
         delete_transient('acenor_grouped_children_ids');
+        delete_transient('acenor_child_parent_map');
+        delete_transient('acenor_sibling_names_' . $product_id);
     }
 });
 
