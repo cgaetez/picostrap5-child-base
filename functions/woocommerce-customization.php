@@ -691,9 +691,9 @@ add_action('woocommerce_single_product_summary', function () {
         if ($short_name === '' || mb_strlen($short_name) < 10) {
             $short_name = $name;
         }
-        // Si el nombre aún es largo, intentar extraer solo las medidas (ej: "15 X 15 X 1 Mm")
-        if (mb_strlen($short_name) > 25 && preg_match('/(\d+[\s,\.]*[xX×][\s,\.\d]+(?:mm|m|cm)?)/i', $short_name, $matches)) {
-            $short_name = trim($matches[0]);
+        // Si el nombre aún es largo, quitar texto hasta el primer número (dejar solo medidas)
+        if (mb_strlen($short_name) > 25 && preg_match('/^[^\d]+/', $short_name, $matches)) {
+            $short_name = trim(mb_substr($short_name, mb_strlen($matches[0])));
         }
         $short_name = mb_strtoupper(mb_substr($short_name, 0, 1)) . mb_substr($short_name, 1);
 

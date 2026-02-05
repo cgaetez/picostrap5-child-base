@@ -69,9 +69,9 @@
           if ( $acenor_short === '' || mb_strlen( $acenor_short ) < 10 ) {
               $acenor_short = $acenor_name;
           }
-          // Si el nombre aún es largo, intentar extraer solo las medidas (ej: "15 X 15 X 1 Mm")
-          if ( mb_strlen( $acenor_short ) > 25 && preg_match( '/(\d+[\s,\.]*[xX×][\s,\.\d]+(?:mm|m|cm)?)/i', $acenor_short, $matches ) ) {
-              $acenor_short = trim( $matches[0] );
+          // Si el nombre aún es largo, quitar texto hasta el primer número (dejar solo medidas)
+          if ( mb_strlen( $acenor_short ) > 25 && preg_match( '/^[^\d]+/', $acenor_short, $matches ) ) {
+              $acenor_short = trim( mb_substr( $acenor_short, mb_strlen( $matches[0] ) ) );
           }
           $acenor_short_names[ $acenor_cid ] = $acenor_short;
       }
